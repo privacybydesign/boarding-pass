@@ -1,0 +1,7 @@
+{
+    "server_config": {
+        "host": "localhost",
+        "port": 8081
+    }
+
+}
