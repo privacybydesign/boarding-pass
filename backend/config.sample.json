@@ -4,11 +4,11 @@
         "port": 8081
     },
     "credential_config": {
-        "private_key_path": "/path/to/your/private-key.pem",
+      "irma_server_url": "some-irma-server-url",
+        "private_key_path": "../local-secrets/priv.pem",
         "issuer_id": "pbdf",
         "credential": "passport",
-        "attribute": "documentNumber",
-        "token": "your-yivi-server-api-token"
+        "attribute": "documentNumber"
     },
     "storage_config": {
         "type": "inmemory",
