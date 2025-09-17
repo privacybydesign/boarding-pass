@@ -39,7 +39,9 @@ type RedisSentinelConfig struct {
 
 type CredentialConfig struct {
 	PrivateKeyPath string `json:"private_key_path"`
+	IrmaServerURL  string `json:"irma_server_url"`
 	IssuerId       string `json:"issuer_id"`
+	RequestorId    string `json:"requestor_id"`
 	Credential     string `json:"credential"`
 	Attribute      string `json:"attribute"`
 	Token          string `json:"token"`
@@ -61,8 +63,18 @@ func main() {
 		log.Error.Fatalf("failed to read config file: %v", err)
 	}
 	tokenStorage := NewTokenStorage(&config.StorageConfig)
+	ticketStore := NewTicketStore()
+	sessionTracker := NewSessionTracker()
 
-	server := NewServer(&ServerState{irmaServerURL: "https://is.staging.yivi.app", apiToken: config.CredentialConfig.Token, tokenStorage: tokenStorage, credentialConfig: config.CredentialConfig}, &config.ServerConfig)
+	serverState := &ServerState{
+		irmaServerURL:    config.CredentialConfig.IrmaServerURL,
+		tokenStorage:     tokenStorage,
+		credentialConfig: config.CredentialConfig,
+		ticketStore:      ticketStore,
+		sessionTracker:   sessionTracker,
+	}
+
+	server := NewServer(serverState, &config.ServerConfig)
 
 	log.Info.Println("starting server on " + config.ServerConfig.Host + ":" + strconv.Itoa(config.ServerConfig.Port))
 	err = server.server.ListenAndServe()
