@@ -1,6 +1,7 @@
-./frontend/dist
-./frontend/node_modules
-./frontend/.env
-./frontend/sample.env
-backend/config.json
+/frontend/dist
+/frontend/node_modules
+/frontend/.env
+/frontend/sample.env
+/backend/config.json
 /local-secrets
+/.idea
