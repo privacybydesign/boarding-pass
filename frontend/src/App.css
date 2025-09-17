@@ -236,17 +236,20 @@ button:hover {
 }
 
 #yivi-web-form .yivi-web-content,
-.yivi-web-form .yivi-web-content {
+.yivi-web-form .yivi-web-content  {
   background-color: #fff !important;
-  box-sizing: border-box;
-  padding: 0 !important;
-  margin: 30px 1rem 1rem 1rem !important;
   display: flex !important;
-  align-items: baseline !important;
+  align-items: stretch !important;
   justify-content: center !important;
   flex: 1 1 auto !important;
   border-radius: 8px !important;
-  max-width: 300px;
-  aspect-ratio: 1 / 1;
+
   border: 0;
+}
+#yivi-web-form  .yivi-qr-canvas,
+.yivi-web-form .yivi-qr-canvas,
+.canvas
+{
+    padding-bottom: 50px !important;
+    margin-bottom: 50px !important;
 }

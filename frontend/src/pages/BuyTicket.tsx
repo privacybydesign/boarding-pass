@@ -1,17 +1,59 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+const API_BASE = import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, "") ?? "";
 
 export default function BuyTicket() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [documentNumber, setDocumentNumber] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string>("");
 
-  function onSubmit(e: React.FormEvent) {
+  const canSubmit = useMemo(
+    () => firstName.trim() !== "" && lastName.trim() !== "" && documentNumber.trim() !== "",
+    [firstName, lastName, documentNumber],
+  );
+
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const ticket = { firstName, lastName, documentNumber };
+    if (!API_BASE) {
+      setError("Backend URL is not configured.");
+      return;
+    }
+    if (!canSubmit || isSubmitting) return;
+
+    setIsSubmitting(true);
+    setError("");
+    const payload = {
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      documentNumber: documentNumber.trim(),
+    };
+
     try {
-      localStorage.setItem("ticket", JSON.stringify(ticket));
-    } catch {}
-    window.location.hash = "#/verify";
+      const response = await fetch(`${API_BASE}/tickets`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Failed to create ticket (status ${response.status})`);
+      }
+
+      const ticket = await response.json();
+      try {
+        localStorage.setItem("ticketId", ticket.id);
+        localStorage.setItem("ticket", JSON.stringify(ticket));
+      } catch {}
+      window.location.hash = "#/verify";
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to create ticket.";
+      setError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -46,9 +88,23 @@ export default function BuyTicket() {
             placeholder="X1234567"
           />
         </label>
-        <button type="submit">Continue to verification</button>
+        {error && (
+          <div
+            style={{
+              color: "#b91c1c",
+              background: "#fef2f2",
+              border: "1px solid #fecaca",
+              padding: "0.75rem 1rem",
+              borderRadius: 8,
+            }}
+          >
+            {error}
+          </div>
+        )}
+        <button type="submit" disabled={!canSubmit || isSubmitting}>
+          {isSubmitting ? "Processing…" : "Continue to verification"}
+        </button>
       </form>
     </div>
   );
 }
-

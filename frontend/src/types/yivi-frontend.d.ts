@@ -25,6 +25,7 @@ declare module '@privacybydesign/yivi-frontend' {
     session: {
       url: string;
       start: any;
+      mapping?: any;
       result: any;
     };
   }
