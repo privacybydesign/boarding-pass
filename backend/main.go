@@ -10,7 +10,39 @@ import (
 )
 
 type Config struct {
-	ServerConfig ServerConfig `json:"server_config"`
+	ServerConfig     ServerConfig     `json:"server_config"`
+	CredentialConfig CredentialConfig `json:"credential_config"`
+	StorageConfig    StorageConfig    `json:"storage_config"`
+}
+
+type StorageConfig struct {
+	Type                string              `json:"type"`
+	RedisConfig         RedisConfig         `json:"redis_config"`
+	RedisSentinelConfig RedisSentinelConfig `json:"redis_sentinel_config"`
+}
+
+type RedisConfig struct {
+	Host      string `json:"host"`
+	Port      int    `json:"port"`
+	Password  string `json:"password"`
+	Namespace string `json:"namespace"`
+}
+
+type RedisSentinelConfig struct {
+	SentinelHost      string `json:"sentinel_host"`
+	SentinelPort      int    `json:"sentinel_port"`
+	MasterName        string `json:"master_name"`
+	Password          string `json:"password"`
+	SentinelNamespace string `json:"sentinel_namespace"`
+	SentinelUsername  string `json:"sentinel_username"`
+}
+
+type CredentialConfig struct {
+	PrivateKeyPath string `json:"private_key_path"`
+	IssuerId       string `json:"issuer_id"`
+	Credential     string `json:"credential"`
+	Attribute      string `json:"attribute"`
+	Token          string `json:"token"`
 }
 
 func main() {
@@ -28,8 +60,9 @@ func main() {
 	if err != nil {
 		log.Error.Fatalf("failed to read config file: %v", err)
 	}
+	tokenStorage := NewTokenStorage(&config.StorageConfig)
 
-	server := NewServer(&ServerState{irmaServerURL: "http://localhost:8080"}, &config.ServerConfig)
+	server := NewServer(&ServerState{irmaServerURL: "https://is.staging.yivi.app", apiToken: config.CredentialConfig.Token, tokenStorage: tokenStorage, credentialConfig: config.CredentialConfig}, &config.ServerConfig)
 
 	log.Info.Println("starting server on " + config.ServerConfig.Host + ":" + strconv.Itoa(config.ServerConfig.Port))
 	err = server.server.ListenAndServe()

@@ -1,0 +1,30 @@
+{
+    "server_config": {
+        "host": "localhost",
+        "port": 8081
+    },
+    "credential_config": {
+        "private_key_path": "/path/to/your/private-key.pem",
+        "issuer_id": "pbdf",
+        "credential": "passport",
+        "attribute": "documentNumber",
+        "token": "your-yivi-server-api-token"
+    },
+    "storage_config": {
+        "type": "inmemory",
+        "redis_config": {
+            "host": "localhost",
+            "port": 6379,
+            "password": "your-redis-password",
+            "namespace": "yivi"
+        },
+        "redis_sentinel": {
+            "sentinel_host": "localhost",
+            "sentinel_port": 26379,
+            "master_name": "mymaster",
+            "password": "your-redis-password",
+            "sentinel_namespace": "yivi",
+            "sentinel_username": "yivi"
+        }
+    }
+}

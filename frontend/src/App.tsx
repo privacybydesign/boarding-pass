@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import Nav from "./components/Nav";
+import logoUrl from "./assets/air-logo.svg";
+import Router from "./router";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const year = new Date().getFullYear();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="app-shell">
+      <header className="app-header">
+        <div className="app-header__brand">
+          <img src={logoUrl} alt="OpenSky Air" width={56} height={56} />
+          <div className="app-header__copy">
+            <h1>OpenSky Air</h1>
+            <p>Online check-in & boarding pass demo</p>
+          </div>
+        </div>
+        <div className="app-header__meta">Check-in opens 24h before departure</div>
+      </header>
+      <Nav />
+      <main className="app-main">
+        <Router />
+      </main>
+      <footer className="app-footer" aria-label="OpenSky Air footer">
+        <div className="app-footer__inner">
+          <span>© {year} OpenSky Air</span>
+          <span>Privacy-first journeys from check-in to arrival.</span>
+        </div>
+      </footer>
+    </div>
+  );
 }
 
-export default App
+export default App;
