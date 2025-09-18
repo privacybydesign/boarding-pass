@@ -3,8 +3,8 @@ import "./App.css";
 import Nav from "./components/Nav";
 import logoUrl from "./assets/air-logo.svg";
 import Router from "./router";
-import i18n from "./i18n"; // <-- make sure your i18n file exports the i18n instance
-import { useTranslation } from "react-i18next"; // <-- you were using it but not importing
+import i18n from "./i18n.ts"
+import { useTranslation } from "react-i18next";
 
 type Language = "nl" | "en";
 
