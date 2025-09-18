@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 
+	"github.com/golang-jwt/jwt"
 	irma "github.com/privacybydesign/irmago"
 )
 
@@ -30,23 +32,29 @@ func handleIRMAServerCallback(w http.ResponseWriter, r *http.Request, state *Ser
 		respondWithErr(w, http.StatusBadRequest, "invalid body", "failed to read callback body", err)
 		return
 	}
-
-	var result sessionResultPayload
 	log.Info.Printf("IRMAServer callback result %s", string(body))
-	if err := json.Unmarshal(body, &result); err != nil {
-		respondWithErr(w, http.StatusBadRequest, "invalid result", "failed to parse callback JSON", err)
+
+	//is jwt so decode jwt first before making into json
+	parsedJWT, err := jwt.ParseWithClaims(string(body), jwt.MapClaims{}, jwtKeyFunc)
+	if err != nil {
+		respondWithErr(w, http.StatusBadRequest, "invalid JWT", "failed to parse callback JWT", err)
+		return
+	}
+	if !parsedJWT.Valid {
+		respondWithErr(w, http.StatusBadRequest, "invalid JWT", "callback JWT invalid", fmt.Errorf("invalid JWT"))
 		return
 	}
 
-	if result.ProofStatus != string(irma.ProofStatusValid) || len(result.Disclosed) == 0 {
-		w.WriteHeader(http.StatusOK)
+	// Extract the claims as a JSON byte slice
+	claims, ok := parsedJWT.Claims.(jwt.MapClaims)
+	if !ok {
+		respondWithErr(w, http.StatusBadRequest, "invalid JWT claims", "failed to extract JWT claims", fmt.Errorf("invalid JWT claims"))
 		return
 	}
 
-	expectedAttr := fmt.Sprintf("pbdf-staging.%s.%s.%s", state.credentialConfig.IssuerId, state.credentialConfig.Credential, state.credentialConfig.Attribute)
-	disclosedDoc, ok := extractDocumentNumber(&result, expectedAttr)
-	if !ok || disclosedDoc == "" {
-		w.WriteHeader(http.StatusOK)
+	disclosedDoc, ok := claims["document_number"].(string)
+	if !ok {
+		respondWithErr(w, http.StatusBadRequest, "missing document_number", "JWT claims missing document_number", fmt.Errorf("missing document_number"))
 		return
 	}
 
@@ -87,4 +95,20 @@ func handleIRMAServerCallback(w http.ResponseWriter, r *http.Request, state *Ser
 	if _, err := w.Write(bs); err != nil {
 		log.Error.Printf("failed to write chained issuance response: %v", err)
 	}
+}
+func jwtKeyFunc(token *jwt.Token) (interface{}, error) {
+	pubBytes, err := os.ReadFile("./test-secrets/pub.pem")
+	if err != nil {
+		return nil, err
+	}
+	pubKey, err := jwt.ParseRSAPublicKeyFromPEM(pubBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure the signing method is RS256
+	if token.Method.Alg() != jwt.SigningMethodRS256.Alg() {
+		return nil, fmt.Errorf("unexpected signing method: %s", token.Header["alg"])
+	}
+	return pubKey, nil
 }

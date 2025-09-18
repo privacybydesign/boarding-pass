@@ -32,6 +32,47 @@ type sessionPointer struct {
 	SessionID  string          `json:"sessionId"`
 }
 
+// sessionResultPayload models the subset of the IRMA server result we use
+type sessionResultPayload struct {
+	Status      string                 `json:"status"`
+	ProofStatus string                 `json:"proofStatus"`
+	Disclosed   [][]disclosedAttribute `json:"disclosed"`
+	Err         *struct {
+		Message string `json:"message"`
+	} `json:"err,omitempty"`
+}
+
+type disclosedAttribute struct {
+	ID string `json:"id"`
+	// IRMA uses "rawvalue" (all lowercase); be tolerant to alternate casing
+	RawValue  string      `json:"rawvalue"`
+	RawValue2 string      `json:"rawValue"`
+	Value     interface{} `json:"value"`
+}
+
+func extractDocumentNumber(res *sessionResultPayload, expectedAttr string) (string, bool) {
+	for _, group := range res.Disclosed {
+		for _, attr := range group {
+			if strings.EqualFold(attr.ID, expectedAttr) {
+				v := attr.RawValue
+				if v == "" {
+					v = attr.RawValue2
+				}
+				if v == "" {
+					if s, ok := attr.Value.(string); ok {
+						v = s
+					}
+				}
+				v = strings.ToUpper(strings.TrimSpace(v))
+				if v != "" {
+					return v, true
+				}
+			}
+		}
+	}
+	return "", false
+}
+
 func handleStartIRMASession(w http.ResponseWriter, r *http.Request, state *ServerState) {
 	var req startVerificationRequest
 	decoder := json.NewDecoder(r.Body)
