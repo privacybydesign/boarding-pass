@@ -63,8 +63,9 @@ func handleIRMAServerCallback(w http.ResponseWriter, r *http.Request, state *Ser
 		respondWithErr(w, http.StatusInternalServerError, ErrorInternal, "failed to load ticket for callback", err)
 		return
 	}
-	if !strings.EqualFold(ticket.DocumentNumber, disclosedDoc) {
-		w.WriteHeader(http.StatusOK)
+	isEqual := strings.EqualFold(ticket.DocumentNumber, disclosedDoc)
+	if !isEqual {
+		respondWithErr(w, http.StatusBadRequest, "document_number mismatch", "disclosed document_number does not match ticket", fmt.Errorf("document_number mismatch"))
 		return
 	}
 
