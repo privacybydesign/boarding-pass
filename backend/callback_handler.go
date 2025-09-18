@@ -50,9 +50,14 @@ func handleIRMAServerCallback(w http.ResponseWriter, r *http.Request, state *Ser
 	}
 	log.Info.Printf("JWT Claims: %+v", claims)
 
-	disclosedDoc, ok := claims["document_number"].(string)
+	disclosed, _ := claims["disclosed"].([]interface{})
+	inner, _ := disclosed[0].([]interface{})
+	attr, _ := inner[0].(map[string]interface{})
+
+	// Get the rawvalue
+	disclosedDoc, ok := attr["rawvalue"].(string)
 	if !ok {
-		respondWithErr(w, http.StatusBadRequest, "missing document_number", "JWT claims missing document_number", fmt.Errorf("missing document_number"))
+		respondWithErr(w, http.StatusBadRequest, "missing document_number", "JWT claims missing rawvalue", fmt.Errorf("missing rawvalue"))
 		return
 	}
 
