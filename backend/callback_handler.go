@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
@@ -94,20 +93,4 @@ func handleIRMAServerCallback(w http.ResponseWriter, r *http.Request, state *Ser
 	if _, err := w.Write(bs); err != nil {
 		log.Error.Printf("failed to write chained issuance response: %v", err)
 	}
-}
-func jwtKeyFunc(token *jwt.Token) (interface{}, error) {
-	pubBytes, err := os.ReadFile("./test-secrets/pub.pem")
-	if err != nil {
-		return nil, err
-	}
-	pubKey, err := jwt.ParseRSAPublicKeyFromPEM(pubBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	// Ensure the signing method is RS256
-	if token.Method.Alg() != jwt.SigningMethodRS256.Alg() {
-		return nil, fmt.Errorf("unexpected signing method: %s", token.Header["alg"])
-	}
-	return pubKey, nil
 }
