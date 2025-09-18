@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/dgrijalva/jwt-go"
 	irma "github.com/privacybydesign/irmago"
 )
 
@@ -35,15 +35,13 @@ func handleIRMAServerCallback(w http.ResponseWriter, r *http.Request, state *Ser
 	log.Info.Printf("IRMAServer callback result %s", string(body))
 
 	//is jwt so decode jwt first before making into json
-	parsedJWT, err := jwt.ParseWithClaims(string(body), jwt.MapClaims{}, jwtKeyFunc)
+	Parser := jwt.Parser{SkipClaimsValidation: true}
+	parsedJWT, _, err := Parser.ParseUnverified(string(body), jwt.MapClaims{})
 	if err != nil {
 		respondWithErr(w, http.StatusBadRequest, "invalid JWT", "failed to parse callback JWT", err)
 		return
 	}
-	if !parsedJWT.Valid {
-		respondWithErr(w, http.StatusBadRequest, "invalid JWT", "callback JWT invalid", fmt.Errorf("invalid JWT"))
-		return
-	}
+	log.Info.Printf("Parsed JWT: %+v", parsedJWT)
 
 	// Extract the claims as a JSON byte slice
 	claims, ok := parsedJWT.Claims.(jwt.MapClaims)
@@ -51,6 +49,7 @@ func handleIRMAServerCallback(w http.ResponseWriter, r *http.Request, state *Ser
 		respondWithErr(w, http.StatusBadRequest, "invalid JWT claims", "failed to extract JWT claims", fmt.Errorf("invalid JWT claims"))
 		return
 	}
+	log.Info.Printf("JWT Claims: %+v", claims)
 
 	disclosedDoc, ok := claims["document_number"].(string)
 	if !ok {
