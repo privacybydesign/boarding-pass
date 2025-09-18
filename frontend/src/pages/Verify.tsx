@@ -1,11 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
 import { apiEndpoint } from "../config";
+import { useTranslation } from "react-i18next";
 
 type Ticket = { firstName: string; lastName: string; documentNumber: string };
 
 export default function Verify() {
-  const [error, setError] = useState<string>("");
+    const { t, i18n } = useTranslation();
+    const lang = ((i18n.resolvedLanguage || i18n.language || "en").slice(0, 2) === "nl" ? "nl" : "en") as
+        | "nl"
+        | "en";
+
+    const [error, setError] = useState<string>("");
   const [sessionDone, setSessionDone] = useState(false);
 
   const ticket: Ticket | null = useMemo(() => {
@@ -27,7 +33,7 @@ export default function Verify() {
 
   useEffect(() => {
     if (!ticket || !ticketId) {
-      setError("Ticket details missing. Please create a ticket again.");
+      setError(t("verify.missing_ticket"));
       return;
     }
 
@@ -51,8 +57,7 @@ export default function Verify() {
         web = yivi.newWeb({
           debugging: true,
           element: "#yivi-web-form",
-          language: "en",
-
+          language: lang,
           session: {
             url: apiEndpoint,
             start: {
@@ -80,19 +85,19 @@ export default function Verify() {
           })
           .catch((e: any) => {
             console.error(e);
-            setError("Verification failed to start.");
+            setError(t("verify.error_start"));
           });
       })
       .catch((e: any) => {
         console.error(e);
-        setError("Unable to load verification client.");
+        setError(t("verify.error_client"));
       });
 
     return () => {
       cancelled = true;
       web?.abort?.();
     };
-  }, [ticket, ticketId]);
+  }, [ticket, ticketId, lang, t]);
 
   return (
     <div
@@ -107,7 +112,7 @@ export default function Verify() {
         overflow: "hidden",
       }}
     >
-      <h2 style={{ marginTop: 0 }}>Verify and Get Boarding Pass</h2>
+      <h2 style={{ marginTop: 0 }}>{t("verify.title")}</h2>
       {!ticket && (
         <div
           style={{
@@ -118,7 +123,7 @@ export default function Verify() {
             borderRadius: 8,
           }}
         >
-          No ticket details found. Please create one on the Buy page.
+          {t("verify.banner_missing")}
         </div>
       )}
 
@@ -128,8 +133,7 @@ export default function Verify() {
         </div>
         <div style={{ display: "grid", gap: "0.5rem", placeItems: "center" }}>
           <p style={{ marginTop: 0, textAlign: "center" }}>
-            Scan the QR code with your Yivi app to authenticate. If you don’t
-            have the app, get it from{" "}
+            {t("verify.instructions")} {" "}
             <a href="https://yivi.app/#download">https://yivi.app/#download</a>
           </p>
           <div id="yivi-web-form" />
@@ -143,7 +147,7 @@ export default function Verify() {
                 borderRadius: 8,
               }}
             >
-              <strong>Error:</strong> {error}
+              <strong>{t("verify.error_label")}:</strong> {error}
             </div>
           )}
         </div>
@@ -159,6 +163,7 @@ function BoardingPass({
   ticket: Ticket | null;
   ready: boolean;
 }) {
+  const { t } = useTranslation();
   const name = ticket ? `${ticket.firstName} ${ticket.lastName}` : "—";
   const doc = ticket ? ticket.documentNumber : "—";
 
@@ -180,16 +185,18 @@ function BoardingPass({
           marginBottom: 8,
         }}
       >
-        <div style={{ fontWeight: 700 }}>Yivi International Airlines</div>
-        <div style={{ fontSize: 12, color: "#6b7280" }}>Demo Boarding Pass</div>
+        <div style={{ fontWeight: 700 }}>{t("boardingpass.title")}</div>
+        <div style={{ fontSize: 12, color: "#6b7280" }}>
+          {t("boardingpass.subtitle")}
+        </div>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-        <Field label="Name" value={name} />
-        <Field label="Document" value={doc} />
-        <Field label="From" value="AMS" />
-        <Field label="To" value="BCN" />
-        <Field label="Flight" value="OS123" />
-        <Field label="Seat" value="12A" />
+        <Field label={t("boardingpass.field_name")} value={name} />
+        <Field label={t("boardingpass.field_document")} value={doc} />
+        <Field label={t("boardingpass.field_from")} value="AMS" />
+        <Field label={t("boardingpass.field_to")} value="BCN" />
+        <Field label={t("boardingpass.field_flight")} value="OS123" />
+        <Field label={t("boardingpass.field_seat")} value="12A" />
       </div>
       <div
         style={{
@@ -198,9 +205,7 @@ function BoardingPass({
           color: ready ? "#065f46" : "#92400e",
         }}
       >
-        {ready
-          ? "Verification complete. Boarding pass ready."
-          : "Complete verification to activate your pass."}
+        {ready ? t("boardingpass.ready") : t("boardingpass.pending")}
       </div>
     </div>
   );

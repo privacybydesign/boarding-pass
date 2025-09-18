@@ -1,4 +1,8 @@
+import { useTranslation } from "react-i18next";
+
 export default function Home() {
+  const { t } = useTranslation();
+
   return (
     <div
       className="card"
@@ -10,19 +14,11 @@ export default function Home() {
         textAlign: "left",
       }}
     >
-      <h2 style={{ marginTop: 0 }}>Welcome to Yivi International Airlines</h2>
-      <p>
-        This simple demo lets you “buy” a ticket with your name and
-        passport/document number, then verify your identity with Yivi to display
-        a boarding pass. It’s a minimal flow to showcase privacy-preserving
-        verification.
-      </p>
+      <h2 style={{ marginTop: 0 }}>{t("home.title")}</h2>
+      <p>{t("home.description")}</p>
       <ul style={{ margin: 0, paddingLeft: "1.25rem" }}>
-        <li>Buy: create a fake ticket with basic info.</li>
-        <li>
-          Verify: scan a QR in Yivi to complete check-in and get a boarding
-          pass.
-        </li>
+        <li>{t("home.step_buy")}</li>
+        <li>{t("home.step_verify")}</li>
       </ul>
       <div
         style={{
@@ -33,10 +29,10 @@ export default function Home() {
         }}
       >
         <a href="#/buy">
-          <button>Buy Ticket</button>
+          <button>{t("home.buy_button")}</button>
         </a>
         <a href="#/verify">
-          <button>Verify & Boarding Pass</button>
+          <button>{t("home.verify_button")}</button>
         </a>
       </div>
     </div>

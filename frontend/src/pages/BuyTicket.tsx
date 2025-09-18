@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import { apiEndpoint } from "../config";
+import { useTranslation } from "react-i18next";
 
 export default function BuyTicket() {
+  const { t } = useTranslation();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [documentNumber, setDocumentNumber] = useState("");
@@ -38,7 +40,8 @@ export default function BuyTicket() {
       if (!response.ok) {
         const message = await response.text();
         throw new Error(
-          message || `Failed to create ticket (status ${response.status})`
+          message ||
+            `${t("buy.error_generic")} (status ${response.status})`
         );
       }
 
@@ -50,7 +53,9 @@ export default function BuyTicket() {
       window.location.hash = "#/verify";
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Failed to create ticket.";
+        err instanceof Error && err.message
+          ? err.message
+          : t("buy.error_generic");
       setError(message);
     } finally {
       setIsSubmitting(false);
@@ -62,36 +67,34 @@ export default function BuyTicket() {
       className="card"
       style={{ maxWidth: 520, margin: "0 auto", textAlign: "left" }}
     >
-      <h2 style={{ marginTop: 0 }}>Buy a Ticket</h2>
-      <p style={{ marginTop: 0, color: "#888" }}>
-        Enter basic details for a demo ticket.
-      </p>
+      <h2 style={{ marginTop: 0 }}>{t("buy.title")}</h2>
+      <p style={{ marginTop: 0, color: "#888" }}>{t("buy.subtitle")}</p>
       <form onSubmit={onSubmit} style={{ display: "grid", gap: "0.75rem" }}>
         <label style={{ display: "grid", gap: "0.35rem" }}>
-          <span>First name</span>
+          <span>{t("buy.first_name_label")}</span>
           <input
             required
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            placeholder="Jane"
+            placeholder={t("buy.first_name_placeholder")}
           />
         </label>
         <label style={{ display: "grid", gap: "0.35rem" }}>
-          <span>Last name</span>
+          <span>{t("buy.last_name_label")}</span>
           <input
             required
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            placeholder="Doe"
+            placeholder={t("buy.last_name_placeholder")}
           />
         </label>
         <label style={{ display: "grid", gap: "0.35rem" }}>
-          <span>Passport / Document number</span>
+          <span>{t("buy.document_label")}</span>
           <input
             required
             value={documentNumber}
             onChange={(e) => setDocumentNumber(e.target.value)}
-            placeholder="X1234567"
+            placeholder={t("buy.document_placeholder")}
           />
         </label>
         {error && (
@@ -108,7 +111,9 @@ export default function BuyTicket() {
           </div>
         )}
         <button type="submit" disabled={!canSubmit || isSubmitting}>
-          {isSubmitting ? "Processing…" : "Continue to verification"}
+          {isSubmitting
+            ? t("buy.submit_processing")
+            : t("buy.submit_cta")}
         </button>
       </form>
     </div>

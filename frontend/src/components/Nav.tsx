@@ -1,13 +1,17 @@
+import { useTranslation } from "react-i18next";
+
 export default function Nav() {
+  const { t } = useTranslation();
+
   return (
     <nav className="main-nav">
       <div className="main-nav__inner">
-        <span className="main-nav__label">Online check-in</span>
+        <span className="main-nav__label">{t("nav.label")}</span>
         <div className="main-nav__links">
-          <a href="#/">Home</a>
-          <a href="#/buy">Buy</a>
-          <a href="#/verify">Verify</a>
-          <a href="#/about">About</a>
+          <a href="#/">{t("nav.home")}</a>
+          <a href="#/buy">{t("nav.buy")}</a>
+          <a href="#/verify">{t("nav.verify")}</a>
+          <a href="#/about">{t("nav.about")}</a>
         </div>
       </div>
     </nav>
