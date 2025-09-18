@@ -26,15 +26,15 @@ i18n
           "nav.about": "About",
           "home.title": "Welcome to Yivi International Airlines",
           "home.description":
-            "This simple demo lets you “buy” a ticket with your name and passport/document number, then verify your identity with Yivi to display a boarding pass. It’s a minimal flow to showcase privacy-preserving verification.",
+            "This simple demo lets you “buy” a ticket with your name and passport/document number, then verify your identity with Yivi to display a boarding pass. It’s a minimal flow to showcase privacy-preserving verification of a machine readable passport.",
           "home.step_buy": "Buy: create a fake ticket with basic info.",
           "home.step_verify":
-            "Verify: scan a QR in Yivi to complete check-in and get a boarding pass.",
+            "Verify: To complete the check-in and get a validated boarding pass, scan a QR with Yivi or (or continue to the Yivi app on the phone) ",
           "home.buy_button": "Buy Ticket",
           "home.verify_button": "Verify & Boarding Pass",
           "about.title": "About",
           "about.description":
-            "This demo starts a Yivi verification session and shows the raw session pointer JSON. Use the Home page to start a session.",
+            "This demo starts a Yivi passport credential verification session to show and validate a boarding pass. After verification, you also get issued a demo boarding pass, available for future use.",
           "buy.title": "Buy a Ticket",
           "buy.subtitle": "Enter basic details for a demo ticket.",
           "buy.first_name_label": "First name",
@@ -84,15 +84,15 @@ i18n
           "nav.about": "Over",
           "home.title": "Welkom bij Yivi International Airlines",
           "home.description":
-            'Deze eenvoudige demo laat je een ticket "kopen" met je naam en paspoort- of documentnummer. Daarna verifieer je je identiteit met Yivi om een boardingpass te tonen. Het is een minimalistische flow die privacyvriendelijke verificatie demonstreert.',
+            'Deze eenvoudige demo laat je een ticket "kopen" met je naam en paspoort-/documentnummer, en vervolgens je identiteit verifiëren met Yivi om een boardingpass te tonen. Het is een minimale flow om privacy-vriendelijke verificatie van een machineleesbaar paspoort te demonstreren.',
           "home.step_buy": "Kopen: maak een nep-ticket aan met basisgegevens.",
           "home.step_verify":
-            "Verifiëren: scan een QR-code in Yivi om in te checken en je boardingpass te ontvangen.",
+            "Verifiëren: Om het inchecken te voltooien en een gevalideerde boardingpass te krijgen, scan je een QR met Yivi (of ga je verder naar de Yivi-app op je telefoon).",
           "home.buy_button": "Ticket kopen",
           "home.verify_button": "Verifiëren & boardingpass",
           "about.title": "Over",
           "about.description":
-            "Deze demo start een Yivi-verificatiesessie en toont de ruwe session pointer JSON. Gebruik de startpagina om een sessie te beginnen.",
+            "Deze demo start een Yivi passport credential verificatiesessie om een boardingpass te tonen en valideren. Na verificatie ontvang je ook een demo boardingpass, die je later kunt gebruiken.",
           "buy.title": "Ticket kopen",
           "buy.subtitle": "Voer basisgegevens in voor een demoticket.",
           "buy.first_name_label": "Voornaam",
