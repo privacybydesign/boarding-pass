@@ -38,7 +38,6 @@ WORKDIR /app/backend
 COPY --from=backend-build /app/backend/server ./server
 COPY --from=frontend-build /app/frontend/dist ../frontend/dist
 RUN mkdir -p /app/local-secrets
-COPY backend/config.json ./config.json
 
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
