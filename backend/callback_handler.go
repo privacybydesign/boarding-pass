@@ -31,7 +31,6 @@ func handleIRMAServerCallback(w http.ResponseWriter, r *http.Request, state *Ser
 		respondWithErr(w, http.StatusBadRequest, "invalid body", "failed to read callback body", err)
 		return
 	}
-	log.Info.Printf("IRMAServer callback result %s", string(body))
 
 	//is jwt so decode jwt first before making into json
 	Parser := jwt.Parser{SkipClaimsValidation: true}
@@ -40,7 +39,6 @@ func handleIRMAServerCallback(w http.ResponseWriter, r *http.Request, state *Ser
 		respondWithErr(w, http.StatusBadRequest, "invalid JWT", "failed to parse callback JWT", err)
 		return
 	}
-	log.Info.Printf("Parsed JWT: %+v", parsedJWT)
 
 	// Extract the claims as a JSON byte slice
 	claims, ok := parsedJWT.Claims.(jwt.MapClaims)
@@ -48,7 +46,6 @@ func handleIRMAServerCallback(w http.ResponseWriter, r *http.Request, state *Ser
 		respondWithErr(w, http.StatusBadRequest, "invalid JWT claims", "failed to extract JWT claims", fmt.Errorf("invalid JWT claims"))
 		return
 	}
-	log.Info.Printf("JWT Claims: %+v", claims)
 
 	disclosed, _ := claims["disclosed"].([]interface{})
 	inner, _ := disclosed[0].([]interface{})

@@ -145,7 +145,6 @@ func handleStartIRMASession(w http.ResponseWriter, r *http.Request, state *Serve
 		return
 	}
 	state.sessionTracker.Link(sessionID, ticket.ID)
-	log.Info.Printf("started IRMA disclosure (chained) session for ticket %s", ticket.ID)
 
 	type resp struct {
 		SessionPtr json.RawMessage `json:"sessionPtr"`
