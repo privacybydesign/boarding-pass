@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
+import { apiEndpoint } from "../config";
 
 type Ticket = { firstName: string; lastName: string; documentNumber: string };
 
@@ -16,45 +17,82 @@ export default function Verify() {
     }
   }, []);
 
-  useEffect(() => {
-    let web: any;
-    setError("");
-    import("@privacybydesign/yivi-frontend").then((yivi: any) => {
-      web = yivi.newWeb({
-        debugging: true,
-        element: "#yivi-web-form",
-        language: "en",
-
-        session: {
-          url: "http://localhost:8081/api",
-          start: {
-            url: (o: any) => `${o.url}/start`,
-            method: "GET",
-            onSuccess: (data: any) => ({ sessionPtr: data.sessionPtr }),
-          },
-          result: {
-            url: (o: any, { sessionPtr }: any) => {
-              if (!sessionPtr || !sessionPtr.u)
-                return `${o.url}/result?sessionID=`;
-              const sessionID = sessionPtr.u.split("/").pop();
-              return `${o.url}/result?sessionID=${sessionID}`;
-            },
-            method: "GET",
-          },
-        },
-      });
-      web
-        .start()
-        .then(() => {
-          setSessionDone(true);
-        })
-        .catch((e: any) => {
-          console.error(e);
-          setError("Verification failed to start.");
-        });
-    });
-    return () => web?.abort();
+  const ticketId: string | null = useMemo(() => {
+    try {
+      return localStorage.getItem("ticketId");
+    } catch {
+      return null;
+    }
   }, []);
+
+  useEffect(() => {
+    if (!ticket || !ticketId) {
+      setError("Ticket details missing. Please create a ticket again.");
+      return;
+    }
+
+    let cancelled = false;
+    let web: any;
+
+    setSessionDone(false);
+    setError("");
+
+    import("@privacybydesign/yivi-frontend")
+      .then((yivi: any) => {
+        if (cancelled) return;
+
+        const payload = {
+          ticketId,
+          firstName: ticket.firstName.trim(),
+          lastName: ticket.lastName.trim(),
+          documentNumber: ticket.documentNumber.trim().toUpperCase(),
+        };
+
+        web = yivi.newWeb({
+          debugging: true,
+          element: "#yivi-web-form",
+          language: "en",
+
+          session: {
+            url: apiEndpoint,
+            start: {
+              url: (o: any) => `${o.url}/start`,
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            },
+            result: {
+              url: (o: any, { sessionPtr }: any) => {
+                if (!sessionPtr || !sessionPtr.u)
+                  return `${o.url}/result?sessionID=`;
+                const sessionID = sessionPtr.u.split("/").pop();
+                return `${o.url}/result?sessionID=${sessionID}`;
+              },
+              method: "GET",
+            },
+          },
+        });
+
+        web
+          .start()
+          .then(() => {
+            setSessionDone(true);
+          })
+          .catch((e: any) => {
+            console.error(e);
+            setError("Verification failed to start.");
+          });
+      })
+      .catch((e: any) => {
+        console.error(e);
+        setError("Unable to load verification client.");
+      });
+
+    return () => {
+      cancelled = true;
+      web?.abort?.();
+    };
+  }, [ticket, ticketId]);
 
   return (
     <div
@@ -91,11 +129,10 @@ export default function Verify() {
         <div style={{ display: "grid", gap: "0.5rem", placeItems: "center" }}>
           <p style={{ marginTop: 0, textAlign: "center" }}>
             Scan the QR code with your Yivi app to authenticate. If you don’t
-            have the app, get it from <a href="https://yivi.app/#download">https://yivi.app/#download</a>
+            have the app, get it from{" "}
+            <a href="https://yivi.app/#download">https://yivi.app/#download</a>
           </p>
-          <div
-            id="yivi-web-form"
-          />
+          <div id="yivi-web-form" />
           {error && (
             <div
               style={{

@@ -6,7 +6,8 @@ services:
       args:
         NODE_VERSION: 22
         GO_VERSION: 1.23
-        VITE_BACKEND_URL: /api
+    environment:
+      VITE_API_ENDPOINT: http://localhost:8080/api
     image: boarding-pass:local
     ports:
       - "8080:8080"

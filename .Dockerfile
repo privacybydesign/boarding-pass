@@ -11,8 +11,6 @@ COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 
 COPY frontend/ ./
-ARG VITE_BACKEND_URL=/api
-ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 RUN npm run build
 
 # ---------- Backend build ----------
@@ -36,10 +34,15 @@ RUN apt-get update \
 
 WORKDIR /app/backend
 
+# Binaries & assets
 COPY --from=backend-build /app/backend/server ./server
 COPY --from=frontend-build /app/frontend/dist ../frontend/dist
 RUN mkdir -p /app/local-secrets
 COPY backend/config.json ./config.json
 
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 EXPOSE 8080
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["./server", "--config", "config.json"]

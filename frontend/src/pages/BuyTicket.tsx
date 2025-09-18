@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
-
-const API_BASE = import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, "") ?? "";
+import { apiEndpoint } from "../config";
 
 export default function BuyTicket() {
   const [firstName, setFirstName] = useState("");
@@ -10,16 +9,15 @@ export default function BuyTicket() {
   const [error, setError] = useState<string>("");
 
   const canSubmit = useMemo(
-    () => firstName.trim() !== "" && lastName.trim() !== "" && documentNumber.trim() !== "",
-    [firstName, lastName, documentNumber],
+    () =>
+      firstName.trim() !== "" &&
+      lastName.trim() !== "" &&
+      documentNumber.trim() !== "",
+    [firstName, lastName, documentNumber]
   );
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!API_BASE) {
-      setError("Backend URL is not configured.");
-      return;
-    }
     if (!canSubmit || isSubmitting) return;
 
     setIsSubmitting(true);
@@ -31,7 +29,7 @@ export default function BuyTicket() {
     };
 
     try {
-      const response = await fetch(`${API_BASE}/tickets`, {
+      const response = await fetch(`${apiEndpoint}/tickets`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -39,7 +37,9 @@ export default function BuyTicket() {
 
       if (!response.ok) {
         const message = await response.text();
-        throw new Error(message || `Failed to create ticket (status ${response.status})`);
+        throw new Error(
+          message || `Failed to create ticket (status ${response.status})`
+        );
       }
 
       const ticket = await response.json();
@@ -49,7 +49,8 @@ export default function BuyTicket() {
       } catch {}
       window.location.hash = "#/verify";
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to create ticket.";
+      const message =
+        err instanceof Error ? err.message : "Failed to create ticket.";
       setError(message);
     } finally {
       setIsSubmitting(false);
@@ -57,9 +58,14 @@ export default function BuyTicket() {
   }
 
   return (
-    <div className="card" style={{ maxWidth: 520, margin: "0 auto", textAlign: "left" }}>
+    <div
+      className="card"
+      style={{ maxWidth: 520, margin: "0 auto", textAlign: "left" }}
+    >
       <h2 style={{ marginTop: 0 }}>Buy a Ticket</h2>
-      <p style={{ marginTop: 0, color: "#888" }}>Enter basic details for a demo ticket.</p>
+      <p style={{ marginTop: 0, color: "#888" }}>
+        Enter basic details for a demo ticket.
+      </p>
       <form onSubmit={onSubmit} style={{ display: "grid", gap: "0.75rem" }}>
         <label style={{ display: "grid", gap: "0.35rem" }}>
           <span>First name</span>
