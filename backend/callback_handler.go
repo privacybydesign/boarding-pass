@@ -32,6 +32,7 @@ func handleIRMAServerCallback(w http.ResponseWriter, r *http.Request, state *Ser
 	}
 
 	var result sessionResultPayload
+	log.Info.Printf("IRMAServer callback result %s", string(body))
 	if err := json.Unmarshal(body, &result); err != nil {
 		respondWithErr(w, http.StatusBadRequest, "invalid result", "failed to parse callback JSON", err)
 		return
