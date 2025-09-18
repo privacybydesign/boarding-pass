@@ -1,0 +1,9 @@
+.git
+.gitignore
+frontend/node_modules
+frontend/dist
+frontend/.env
+frontend/sample.env
+local-secrets
+.idea
+.DS_Store

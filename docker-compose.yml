@@ -1,0 +1,16 @@
+services:
+  boarding-pass:
+    build:
+      context: .
+      dockerfile: .Dockerfile
+      args:
+        NODE_VERSION: 22
+        GO_VERSION: 1.23
+        VITE_BACKEND_URL: /api
+    image: boarding-pass:local
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/config.json:/app/backend/config.json:ro
+      - ./local-secrets:/app/local-secrets:ro
+    restart: unless-stopped
