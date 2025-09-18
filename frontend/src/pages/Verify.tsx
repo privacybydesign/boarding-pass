@@ -180,7 +180,7 @@ function BoardingPass({
           marginBottom: 8,
         }}
       >
-        <div style={{ fontWeight: 700 }}>OpenSky Air</div>
+        <div style={{ fontWeight: 700 }}>Yivi International Airlines</div>
         <div style={{ fontSize: 12, color: "#6b7280" }}>Demo Boarding Pass</div>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
