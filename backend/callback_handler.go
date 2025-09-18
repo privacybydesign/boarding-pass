@@ -81,6 +81,9 @@ func handleIRMAServerCallback(w http.ResponseWriter, r *http.Request, state *Ser
 			"from":      ticket.From,
 			"to":        ticket.To,
 			"seat":      ticket.Seat,
+			"date":      ticket.Date,
+			"time":      ticket.Time,
+			"gate":      ticket.Gate,
 		},
 	}
 	issuanceReq := irma.NewIssuanceRequest([]*irma.CredentialRequest{cred})

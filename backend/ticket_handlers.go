@@ -21,6 +21,9 @@ const (
 	defaultFrom   = "AMS"
 	defaultTo     = "BCN"
 	defaultSeat   = "12A"
+	defaultDate   = "2025-12-24"
+	defaultTime   = "10:30"
+	defaultGate   = "A1"
 )
 
 func handleCreateTicket(w http.ResponseWriter, r *http.Request, state *ServerState) {
@@ -47,6 +50,9 @@ func handleCreateTicket(w http.ResponseWriter, r *http.Request, state *ServerSta
 		From:           defaultFrom,
 		To:             defaultTo,
 		Seat:           defaultSeat,
+		Date:           defaultDate,
+		Time:           defaultTime,
+		Gate:           defaultGate,
 	}
 
 	created := state.ticketStore.Create(ticket)
