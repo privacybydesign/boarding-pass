@@ -95,6 +95,6 @@ func registerSessionRoutes(router *mux.Router, state *ServerState) {
 	}).Methods(http.MethodGet)
 
 	router.HandleFunc("/api/nextsession", func(w http.ResponseWriter, r *http.Request) {
-		handleNextSession(w, r, state)
+		handleNextSession(w, r)
 	}).Methods(http.MethodPost)
 }
