@@ -1,7 +1,8 @@
 {
     "server_config": {
         "host": "localhost",
-        "port": 8081
+        "port": 8080,
+      "next_session_url": "endpoint-that-irma-server-calls-to-get-issuance-request"
     },
     "credential_config": {
       "irma_server_url": "some-irma-server-url",

@@ -12,8 +12,9 @@ import (
 )
 
 type ServerConfig struct {
-	Host string `json:"host"`
-	Port int    `json:"port"`
+	Host           string `json:"host"`
+	Port           int    `json:"port"`
+	NextSessionURL string `json:"next_session_url"`
 }
 
 type Server struct {
@@ -25,6 +26,7 @@ type ServerState struct {
 	irmaServerURL    string
 	tokenStorage     TokenStorage
 	credentialConfig CredentialConfig
+	serverConfig     ServerConfig
 }
 
 type SpaHandler struct {

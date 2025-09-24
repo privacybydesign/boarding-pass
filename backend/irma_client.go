@@ -14,7 +14,7 @@ type SessionPackage struct {
 	SessionPtr json.RawMessage `json:"sessionPtr"`
 }
 
-func makeChainedRequest() irma.ServiceProviderRequest {
+func makeChainedRequest(config ServerConfig) irma.ServiceProviderRequest {
 	irma.NewRequestorIdentifier("boarding-pass")
 
 	disclosureRequest := irma.NewDisclosureRequest()
@@ -31,7 +31,7 @@ func makeChainedRequest() irma.ServiceProviderRequest {
 		RequestorBaseRequest: irma.RequestorBaseRequest{
 			ResultJwtValidity: 120,
 			ClientTimeout:     120,
-			NextSession:       &irma.NextSessionData{URL: "https://6a6f78eb8031.ngrok-free.app/api/nextsession"},
+			NextSession:       &irma.NextSessionData{URL: config.NextSessionURL},
 		},
 		Request: disclosureRequest,
 	}

@@ -20,7 +20,7 @@ func handleStart(w http.ResponseWriter, r *http.Request, state *ServerState) {
 		return
 	}
 
-	disclosureWithNext := makeChainedRequest()
+	disclosureWithNext := makeChainedRequest(state.serverConfig)
 
 	privateKey, err := readPrivateKey(state)
 	if err != nil {
@@ -115,7 +115,7 @@ func handleResult(w http.ResponseWriter, r *http.Request, state *ServerState) {
 
 }
 
-func handleNextSession(w http.ResponseWriter, r *http.Request, state *ServerState) {
+func handleNextSession(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		respondWithErr(w, http.StatusBadRequest, "invalid request", "invalid request method", fmt.Errorf("invalid request method"))
 		return
@@ -125,7 +125,6 @@ func handleNextSession(w http.ResponseWriter, r *http.Request, state *ServerStat
 		http.Error(w, "could not read body", http.StatusBadRequest)
 		return
 	}
-	defer r.Body.Close()
 
 	// decode jwt body response
 	Parser := jwt.Parser{SkipClaimsValidation: true}
