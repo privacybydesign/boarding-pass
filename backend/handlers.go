@@ -10,7 +10,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strings"
 )
 
 func handleStart(w http.ResponseWriter, r *http.Request, state *ServerState) {
