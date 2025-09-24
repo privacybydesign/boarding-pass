@@ -64,6 +64,7 @@ func main() {
 		irmaServerURL:    config.CredentialConfig.IrmaServerURL,
 		tokenStorage:     tokenStorage,
 		credentialConfig: config.CredentialConfig,
+		serverConfig:     config.ServerConfig,
 	}
 
 	server := NewServer(serverState, &config.ServerConfig)

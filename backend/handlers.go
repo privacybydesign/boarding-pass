@@ -48,8 +48,7 @@ func handleStart(w http.ResponseWriter, r *http.Request, state *ServerState) {
 		respondWithErr(w, http.StatusInternalServerError, ErrorInternal, "failed to decode disclosure response", err)
 		return
 	}
-	fmt.Println(sp.SessionPtr)
-	fmt.Println(string(sp.SessionPtr))
+
 	sessionID, err := extractSessionIDFromPtr(sp.SessionPtr)
 	if err != nil {
 		respondWithErr(w, http.StatusInternalServerError, ErrorInternal, "failed to extract sessionID from sessionPtr", err)
