@@ -9,7 +9,6 @@ export default function Nav() {
         <span className="main-nav__label">{t("nav.label")}</span>
         <div className="main-nav__links">
           <a href="#/">{t("nav.home")}</a>
-          <a href="#/buy">{t("nav.buy")}</a>
           <a href="#/verify">{t("nav.verify")}</a>
           <a href="#/about">{t("nav.about")}</a>
         </div>

@@ -1,15 +1,11 @@
 package main
 
 import (
-	"bytes"
-	"crypto/rsa"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 
-	"github.com/golang-jwt/jwt/v4"
 	irma "github.com/privacybydesign/irmago"
 )
 
@@ -18,48 +14,28 @@ type SessionPackage struct {
 	SessionPtr json.RawMessage `json:"sessionPtr"`
 }
 
-func makeDisclosureRequest(credentialConfig *CredentialConfig) *irma.DisclosureRequest {
+func makeChainedRequest() irma.ServiceProviderRequest {
 	irma.NewRequestorIdentifier("boarding-pass")
 
 	disclosureRequest := irma.NewDisclosureRequest()
 	disclosureRequest.Disclose = irma.AttributeConDisCon{
 		irma.AttributeDisCon{
-			irma.AttributeCon{irma.NewAttributeRequest("pbdf-staging." + credentialConfig.IssuerId + "." + credentialConfig.Credential + "." + credentialConfig.Attribute)},
+			irma.AttributeCon{
+				irma.NewAttributeRequest("pbdf-staging.pbdf.passport.firstName"),
+				irma.NewAttributeRequest("pbdf-staging.pbdf.passport.lastName"),
+			},
 		},
 	}
-	return disclosureRequest
-}
 
-func startChainedSession(baseURL string, req irma.ServiceProviderRequest, requestorID string, priv *rsa.PrivateKey) (*SessionPackage, error) {
-	jwtStr, err := irma.SignRequestorRequest(&req, jwt.GetSigningMethod(jwt.SigningMethodRS256.Alg()), priv, requestorID)
-	if err != nil {
-		return nil, fmt.Errorf("sign requestor request: %w", err)
+	chainedRequest := irma.ServiceProviderRequest{
+		RequestorBaseRequest: irma.RequestorBaseRequest{
+			ResultJwtValidity: 120,
+			ClientTimeout:     120,
+			NextSession:       &irma.NextSessionData{URL: "https://6a6f78eb8031.ngrok-free.app/api/nextsession"},
+		},
+		Request: disclosureRequest,
 	}
-
-	httpReq, err := http.NewRequest(http.MethodPost, baseURL+"/session", bytes.NewBufferString(jwtStr))
-	if err != nil {
-		return nil, err
-	}
-
-	httpReq.Header.Set("Content-Type", "text/plain")
-	httpReq.Header.Set("Accept", "application/json")
-
-	resp, err := http.DefaultClient.Do(httpReq)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	rb, _ := io.ReadAll(resp.Body)
-	if resp.StatusCode/100 != 2 {
-		return nil, fmt.Errorf("start chained session: %d: %s", resp.StatusCode, string(rb))
-	}
-
-	var sp SessionPackage
-	if err := json.Unmarshal(rb, &sp); err != nil {
-		return nil, err
-	}
-	return &sp, nil
+	return chainedRequest
 }
 
 func extractSessionIDFromPtr(sessionPtr json.RawMessage) (string, error) {
@@ -82,4 +58,32 @@ func extractSessionIDFromPtr(sessionPtr json.RawMessage) (string, error) {
 	}
 
 	return sessionID, nil
+}
+func getDisclosureResp(state *ServerState, token string) (response *http.Response, err error) {
+	requestorResultURL := fmt.Sprintf("%s/session/%s/result", state.irmaServerURL, token)
+	discReq, err := http.NewRequest(http.MethodGet, requestorResultURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	discReq.Header.Set("Accept", "application/json")
+	discResp, err := http.DefaultClient.Do(discReq)
+	if err != nil {
+		return nil, err
+	}
+	return discResp, nil
+
+}
+func sendDisclosureRequest(irmaSessionURL string, signedDiscReq string) (*http.Response, error) {
+	httpReq, err := http.NewRequest(http.MethodPost, irmaSessionURL, strings.NewReader(signedDiscReq))
+	if err != nil {
+		return nil, err
+	}
+	httpReq.Header.Set("Content-Type", "text/plain")
+	httpReq.Header.Set("Accept", "application/json")
+
+	httpResp, err := http.DefaultClient.Do(httpReq)
+	if err != nil {
+		return nil, err
+	}
+	return httpResp, err
 }

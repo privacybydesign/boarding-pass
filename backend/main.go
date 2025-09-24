@@ -40,11 +40,7 @@ type RedisSentinelConfig struct {
 type CredentialConfig struct {
 	PrivateKeyPath string `json:"private_key_path"`
 	IrmaServerURL  string `json:"irma_server_url"`
-	IssuerId       string `json:"issuer_id"`
 	RequestorId    string `json:"requestor_id"`
-	Credential     string `json:"credential"`
-	Attribute      string `json:"attribute"`
-	Token          string `json:"token"`
 }
 
 func main() {
@@ -63,15 +59,11 @@ func main() {
 		log.Error.Fatalf("failed to read config file: %v", err)
 	}
 	tokenStorage := NewTokenStorage(&config.StorageConfig)
-	ticketStore := NewTicketStore()
-	sessionTracker := NewSessionTracker()
 
 	serverState := &ServerState{
 		irmaServerURL:    config.CredentialConfig.IrmaServerURL,
 		tokenStorage:     tokenStorage,
 		credentialConfig: config.CredentialConfig,
-		ticketStore:      ticketStore,
-		sessionTracker:   sessionTracker,
 	}
 
 	server := NewServer(serverState, &config.ServerConfig)

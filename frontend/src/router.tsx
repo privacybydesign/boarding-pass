@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
 import Home from "./pages/Home";
 import About from "./pages/About";
-import BuyTicket from "./pages/BuyTicket";
 import Verify from "./pages/Verify";
 
-type Route = "#/" | "#/about" | "#/buy" | "#/verify";
+type Route = "#/" | "#/about" | "#/verify";
 
 function getRoute(): Route {
   const h = window.location.hash || "#/";
   switch (h) {
     case "#/about":
-    case "#/buy":
     case "#/verify":
       return h as Route;
     default:
@@ -30,8 +28,6 @@ export default function Router() {
   switch (route) {
     case "#/about":
       return <About />;
-    case "#/buy":
-      return <BuyTicket />;
     case "#/verify":
       return <Verify />;
     case "#/":

@@ -6,9 +6,7 @@
     "credential_config": {
       "irma_server_url": "some-irma-server-url",
         "private_key_path": "../local-secrets/priv.pem",
-        "issuer_id": "pbdf",
-        "credential": "passport",
-        "attribute": "documentNumber"
+      "requestor_id": "boarding-pass"
     },
     "storage_config": {
         "type": "inmemory",

@@ -21,7 +21,6 @@ i18n
           "app.footer.copyright": "© {year} Yivi International Airlines",
           "nav.label": "Online check-in",
           "nav.home": "Home",
-          "nav.buy": "Buy",
           "nav.verify": "Verify",
           "nav.about": "About",
           "home.title": "Welcome to Yivi International Airlines",
@@ -64,6 +63,9 @@ i18n
           "boardingpass.field_to": "To",
           "boardingpass.field_flight": "Flight",
           "boardingpass.field_seat": "Seat",
+            "boardingpass.field_date": "Date",
+            "boardingpass.field_time": "Time",
+            "boardingpass.field_gate": "Gate",
           "boardingpass.ready": "Verification complete. Boarding pass ready.",
           "boardingpass.pending":
             "Complete verification to activate your pass.",
@@ -122,6 +124,9 @@ i18n
           "boardingpass.field_to": "Naar",
           "boardingpass.field_flight": "Vlucht",
           "boardingpass.field_seat": "Stoel",
+            "boardingpass.field_date": "Datum",
+            "boardingpass.field_time": "Tijd",
+            "boardingpass.field_gate": "Gate",
           "boardingpass.ready": "Verificatie voltooid. Boardingpass is klaar.",
           "boardingpass.pending":
             "Maak de verificatie af om je pass te activeren.",

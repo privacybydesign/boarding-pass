@@ -17,7 +17,6 @@ export default function Home() {
       <h2 style={{ marginTop: 0 }}>{t("home.title")}</h2>
       <p>{t("home.description")}</p>
       <ul style={{ margin: 0, paddingLeft: "1.25rem" }}>
-        <li>{t("home.step_buy")}</li>
         <li>{t("home.step_verify")}</li>
       </ul>
       <div
@@ -28,9 +27,6 @@ export default function Home() {
           marginTop: "0.5rem",
         }}
       >
-        <a href="#/buy">
-          <button>{t("home.buy_button")}</button>
-        </a>
         <a href="#/verify">
           <button>{t("home.verify_button")}</button>
         </a>
