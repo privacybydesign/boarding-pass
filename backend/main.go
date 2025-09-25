@@ -41,6 +41,8 @@ type CredentialConfig struct {
 	PrivateKeyPath string `json:"private_key_path"`
 	IrmaServerURL  string `json:"irma_server_url"`
 	RequestorId    string `json:"requestor_id"`
+	Scheme         string `json:"scheme"`
+	NextSessionURL string `json:"next_session_url"`
 }
 
 func main() {

@@ -5,11 +5,12 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	irma "github.com/privacybydesign/irmago"
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/dgrijalva/jwt-go"
+	irma "github.com/privacybydesign/irmago"
 )
 
 func handleStart(w http.ResponseWriter, r *http.Request, state *ServerState) {
@@ -20,7 +21,7 @@ func handleStart(w http.ResponseWriter, r *http.Request, state *ServerState) {
 		return
 	}
 
-	disclosureWithNext := makeChainedRequest(state.serverConfig)
+	disclosureWithNext := makeChainedRequest(*state)
 
 	privateKey, err := readPrivateKey(state)
 	if err != nil {
@@ -48,7 +49,7 @@ func handleStart(w http.ResponseWriter, r *http.Request, state *ServerState) {
 		respondWithErr(w, http.StatusInternalServerError, ErrorInternal, "failed to decode disclosure response", err)
 		return
 	}
-
+	println("sp.SessionPtr", sp.SessionPtr)
 	sessionID, err := extractSessionIDFromPtr(sp.SessionPtr)
 	if err != nil {
 		respondWithErr(w, http.StatusInternalServerError, ErrorInternal, "failed to extract sessionID from sessionPtr", err)

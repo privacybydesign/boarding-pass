@@ -14,15 +14,15 @@ type SessionPackage struct {
 	SessionPtr json.RawMessage `json:"sessionPtr"`
 }
 
-func makeChainedRequest(config ServerConfig) irma.ServiceProviderRequest {
+func makeChainedRequest(state ServerState) irma.ServiceProviderRequest {
 	irma.NewRequestorIdentifier("boarding-pass")
 
 	disclosureRequest := irma.NewDisclosureRequest()
 	disclosureRequest.Disclose = irma.AttributeConDisCon{
 		irma.AttributeDisCon{
 			irma.AttributeCon{
-				irma.NewAttributeRequest("pbdf-staging.pbdf.passport.firstName"),
-				irma.NewAttributeRequest("pbdf-staging.pbdf.passport.lastName"),
+				irma.NewAttributeRequest(state.credentialConfig.Scheme + ".pbdf.passport.firstName"),
+				irma.NewAttributeRequest(state.credentialConfig.Scheme + ".pbdf.passport.lastName"),
 			},
 		},
 	}
@@ -31,7 +31,7 @@ func makeChainedRequest(config ServerConfig) irma.ServiceProviderRequest {
 		RequestorBaseRequest: irma.RequestorBaseRequest{
 			ResultJwtValidity: 120,
 			ClientTimeout:     120,
-			NextSession:       &irma.NextSessionData{URL: config.NextSessionURL},
+			NextSession:       &irma.NextSessionData{URL: state.credentialConfig.NextSessionURL},
 		},
 		Request: disclosureRequest,
 	}

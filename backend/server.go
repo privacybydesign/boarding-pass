@@ -12,9 +12,8 @@ import (
 )
 
 type ServerConfig struct {
-	Host           string `json:"host"`
-	Port           int    `json:"port"`
-	NextSessionURL string `json:"next_session_url"`
+	Host string `json:"host"`
+	Port int    `json:"port"`
 }
 
 type Server struct {

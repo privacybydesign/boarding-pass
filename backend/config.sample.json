@@ -4,11 +4,13 @@
         "port": 8080,
       "next_session_url": "endpoint-that-irma-server-calls-to-get-issuance-request"
     },
-    "credential_config": {
-      "irma_server_url": "some-irma-server-url",
-        "private_key_path": "../local-secrets/priv.pem",
-      "requestor_id": "boarding-pass"
-    },
+  "credential_config": {
+    "irma_server_url": "some-irma-server-url",
+    "private_key_path": "../local-secrets/priv.pem",
+    "requestor_id": "boarding-pass",
+    "scheme": "pbdf-staging",
+    "next_session_url": "endpoint-that-irma-server-calls-to-get-issuance-request"
+  },
     "storage_config": {
         "type": "inmemory",
         "redis_config": {
